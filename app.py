@@ -30,10 +30,13 @@ app.debug = True
 # Scss files
 scss = Bundle(
     "assets/process_req.scss",  # 1. will read this scss file and generate a css file based on it
-    filters="libsass",   # using this filter: https://webassets.readthedocs.io/en/latest/builtin_filters.html#libsass
-    output="css/scss-generated.css"  # 2. and output the generated .css file in the static/css folder
+    filters="libsass",  # using this filter: https://webassets.readthedocs.io/en/latest/builtin_filters.html#libsass
+    output="css/scss-generated.css",  # 2. and output the generated .css file in the static/css folder
 )
-assets.register("scss_all", scss)  # 3. register the generated css file, to be used in Jinja templates (see base.html)
+assets.register(
+    "scss_all", scss
+)  # 3. register the generated css file, to be used in Jinja templates (see base.html)
+
 
 @app.route("/")
 def frontpage():
@@ -59,4 +62,4 @@ def generate():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",  port=5000,debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

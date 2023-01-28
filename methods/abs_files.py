@@ -4,9 +4,9 @@ import sdtools.globals as globals
 import os
 from pathlib import Path
 
+
 def get_generations(src_dir):
-    """读取ai生成的图像
-    """
+    """读取ai生成的图像"""
     image_files = fileops.get_files_with_suffix(src_dir, globals.IMG_FILES)
 
     return_imgs = []
@@ -21,4 +21,4 @@ def get_generations(src_dir):
         return_imgs.append((img_path, img_filename, txt_full_path, ", ".join(tags)))
 
     return_imgs = sorted(return_imgs, key=lambda x: x[1], reverse=True)
-    return  return_imgs
+    return return_imgs

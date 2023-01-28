@@ -27,7 +27,7 @@ python gen_redirect.py
 ## 使用:
 配置文件 → `config.toml`
 
-gen_redirect.py的配置: 目前hard-coded
+gen_redirect.py的配置: 目前hard-coded,
 
 把需要识别的图片放到`./static/generated`目录
 

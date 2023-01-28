@@ -1,28 +1,29 @@
-"""
-Original written by Galvin:
-https://github.com/GalvinGao
-"""
-
+import random
+import time
+from threading import Thread
+from sdtools.fileops import *
+import sdtools.txtops as txtops
+import toml
 from flask import Flask, request, redirect, request, jsonify
 from queue import Queue
-import json
-import requests
-
+from typing import *
 import base64
 import datetime
 import hashlib
-import os
-import random
 import json, os
 import requests as r
 from tqdm import tqdm
 from typing import *
 
+"""
+Original written by Galvin:
+https://github.com/GalvinGao
+"""
 
 # gen_image takes a prompt and returns a generated PNG image in base64 format
 def gen_image(payload: Dict) -> str:
-    prompt = payload['prompt']
-    resp = r.post(f"{BASE_URL}/sdapi/v1/txt2img", json=payload, timeout=600)
+    prompt = payload["prompt"]
+    resp = r.post(f"{WEBUI_URL}/sdapi/v1/txt2img", json=payload, timeout=600)
     if resp.status_code != 200:
         raise Exception(
             f"Failed to generate image for prompt {prompt}: Status code {resp.status_code}, {resp.text}"
@@ -63,9 +64,6 @@ def process_req(payload: Dict):  # prompt: string
         print(f"Failed to generate image for prompt {prompt}: {e}")
 
 
-app = Flask(__name__)
-request_queue = Queue(maxsize=1000)
-
 gen_template = {
     "denoising_strength": 0.7,
     "prompt": "",
@@ -85,8 +83,8 @@ def modify_request(request):
     # Parse the incoming request as a JSON object
 
     new_request = gen_template
-    prompt = request['prompt']
-    shape = request['shape']
+    prompt = request["prompt"]
+    shape = request["shape"]
     if shape == "horizontal":
         w, h = (704, 512)
     elif shape == "squared":
@@ -95,33 +93,116 @@ def modify_request(request):
         w, h = (512, 704)  # vertical
 
     # Modify the request by adding a new key-value pair
-    new_request['prompt'] = prompt
-    new_request['width'] = w
-    new_request['height'] = h
+    new_request["prompt"] = prompt
+    new_request["width"] = w
+    new_request["height"] = h
 
     return new_request
 
 
-SRC_DIR = "D:\CSC3\\abyss"
-DIST_DIR = "./static/generated"
-BASE_URL = "http://127.0.0.1:7860"
+SRC_DIR = "D:\CSC3\\abyss"    # main app.py location; also there should be an config.toml there
+
+app = Flask(__name__)
+request_queue = Queue(maxsize=1000)
+
+with open(os.path.join(SRC_DIR, "config.toml")) as f:
+    queue_config = toml.load(f)
+
+DIST_DIR = queue_config["queue_dst_dir"]
+WEBUI_URL = queue_config["webui_url"]
+TXT_DIR = queue_config["txt_dir"]
+
+txt_files = get_files_with_suffix(TXT_DIR, TXT_FILE)
 
 
-@app.route('/', methods=['POST'])
-def handle_request():
+def read_random_txt():
+    curr_txt = random.choice(txt_files)
+    with open (os.path.join(TXT_DIR, curr_txt)) as f:
+        curr_prompt = ''.join(f.readlines())
+        return curr_prompt
+def preprocess_txt(tag_str):
+    tags = txtops.get_cleaned_tags_lite(tag_str)
+    if "best quality" not in tags:
+        tags = ["best quality"] + tags
+    if "absurdres" not in tags:
+        tags = tags + ["absurdres"]
+    return ", ".join(tags)
+
+
+def fetch_dummy_request() -> Dict:
+    """
+    从预先指定好的文件夹读取txt, 修改后放入request queue
+    :return:
+    :rtype:
+    """
+    shape= random.choice(["horizontal", "vertical", "vertical", "square"])
+    random_text = read_random_txt()
+    prompt = preprocess_txt(random_text)
+    dummy_dict = {
+        "prompt": prompt,
+        "shape": shape
+    }
+    dummy_payload = modify_request(dummy_dict)
+    return dummy_payload
+
+def check_queue():
+    """
+    检查当前queue是否为空; 如果是, 生成dummy request放入队列
+    :return:
+    :rtype:
+    """
+    mkdir_if_not_exist("TEST")
+    print("check_queue: running")
+    while True:
+        if request_queue.empty():
+            dummy_request = fetch_dummy_request()
+            request_queue.put(dummy_request)
+            date_str = datetime.datetime.now().strftime("%H:%M:%S")
+            print(f"{date_str} [new request]: {dummy_request['prompt']}")
+            time.sleep(5)
+
+def run_queue():
+    """
+    持续运行queue
+    :return:
+    :rtype:
+    """
+    mkdir_if_not_exist("TESTRUN")
+    print("run_queue: running")
+    while True:
+        if not request_queue.empty():
+            req = request_queue.get()
+            # Send the request to port 7860
+            process_req(req)
+            date_str = datetime.datetime.now().strftime("%H:%M:%S")
+            print(f"{date_str} [processed]: {req['prompt']}")
+        else:
+            time.sleep(0.5)
+
+@app.route("/", methods=["POST"])
+def receive_request():
+    """
+    从网站收到生成request
+    :return:
+    :rtype:
+    """
     # Get the incoming request and add it to the queue
     incoming_request = request.get_json()
     print(f"received: [{incoming_request['shape']}] {incoming_request['prompt']}")
-
     modified_request = modify_request(incoming_request)
     request_queue.put(modified_request)
-
-    # Send the request from the queue to port 7860
-    while not request_queue.empty():
-        req = request_queue.get()
-        process_req(req)
-        return "processed"
+    return "request added to queue"
 
 
-if __name__ == '__main__':
+t1 = Thread(target=check_queue)
+t2 = Thread(target=run_queue)
+t1.start()
+t2.start()
+
+if __name__ == "__main__":
+    """
+    2个thread + flask接收外部请求:
+    - check_queue
+    - run_queue
+    """
     app.run(port=7861)

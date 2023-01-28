@@ -1,2 +1,8 @@
 aiimg_dir = "./static/generated"
 queue_dst = "http://127.0.0.1:7861"
+
+
+# ======= QUEUE ==========
+queue_dst_dir = "./static/generated"
+webui_url = "http://127.0.0.1:7860"
+txt_dir = "D:\\Andrew\\Pictures\\==train\\==pai\\aesthetics.1280.cmb"
