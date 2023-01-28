@@ -7,7 +7,7 @@ import sdtools.txtops
 import json
 import toml
 import os.path
-
+import requests
 from webassets import Bundle
 
 from methods.abs_files import *
@@ -29,7 +29,7 @@ assets.url = app.static_url_path
 app.debug = True
 # Scss files
 scss = Bundle(
-    "assets/main.scss",  # 1. will read this scss file and generate a css file based on it
+    "assets/process_req.scss",  # 1. will read this scss file and generate a css file based on it
     filters="libsass",   # using this filter: https://webassets.readthedocs.io/en/latest/builtin_filters.html#libsass
     output="css/scss-generated.css"  # 2. and output the generated .css file in the static/css folder
 )
@@ -37,13 +37,6 @@ assets.register("scss_all", scss)  # 3. register the generated css file, to be u
 
 @app.route("/")
 def frontpage():
-    # image, score, json_path, tag_str
-    img1 = ("./static/imgs/img1.jpg", 10, "./static/img1.json", "1girl")
-    img2 = ("./static/imgs/img2.jpg", 9, "./static/img2.json", "1girl, best quality")
-    images = [
-        img1, img2
-    ]
-    cfg = config
     ai_src = config["aiimg_dir"]
     generations = get_generations(ai_src)
 
@@ -52,15 +45,17 @@ def frontpage():
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    prompt = request.form["prompt"]
-    try:
-        shape = request.form["shape"]
-    except Exception:
-        shape = "vertical"
-    print(prompt, shape)
+    """
+    queue_dst: micro service for load-balancing generation requests
+    :return:
+    :rtype:
+    """
+    queue_dst = config["queue_dst"]
+    incoming_request = request.values.to_dict()
+    response = requests.post(queue_dst, json=incoming_request)
 
-
-    return "Prompt received"
+    print(response)
+    return
 
 
 if __name__ == "__main__":
