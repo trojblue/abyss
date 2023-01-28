@@ -1,0 +1,59 @@
+// static/assets/main.scss
+// Source: https://getbootstrap.com/docs/5.1/customize/sass/#importing
+
+// Custom Bootstrap variables
+
+
+
+
+#images-row {
+    padding: 0 2px;
+
+    .card-entirety {
+        border-radius: 5px;
+        box-shadow: 0px 2px 10px 2px #ccc;
+        transition: all 0.3s ease;
+        &:hover {
+            transform: scale(1.01);
+            box-shadow: 0px 2px 20px 5px #ccc;
+        }
+    }
+}
+
+// font
+.inline-metrics {
+    color: #3b4046;
+    font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+    font-size: 0.7rem;
+    overflow: auto;
+    tab-size: 2;
+    -moz-tab-size: 2;
+    white-space: pre;
+    word-wrap: normal;
+    font-weight: 700;
+}
+
+
+.friendly-font {
+    color: #3b4046;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+}
+
+
+// modal
+$modal-fade-transform: scale(.9);
+$modal-fade-duration: .1s;
+$modal-transition-duration: 0.1s;
+$modal-transition:                  transform 0s;
+
+// Include all of Bootstrap
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// cards
+.custom-card-body {
+  padding: 0 0 3px 3px;
+  .card-text {
+    padding-top: 0;
+  }
+}
