@@ -1,29 +1,154 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageModal">
-  Launch demo modal
-</button>
 
 <!-- Modal -->
 <!-- https://getbootstrap.com/docs/5.3/components/modal/ -->
 <!-- Modal -->
+
+
+<style>
+    #modalImage {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .modal-content {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-close {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 999;
+    }
+
+    .modal-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+    }
+    .filename-text{
+
+    }
+
+    .modal-info-section {
+        justify-content: left;
+    }
+</style>
 <div class="modal" id="imageModal" tabindex="-1" aria-labelledby="imgModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable ">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="imgModalLabel">Image Details</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <div class="modal-body" style="min-height: 800px">
+                <img src="" data-src="" class="img-responsive" id="modalImage">
+                <div class="text-left mt-2">
+                    <p class="text-muted mt-0 mb-0 inline-metrics">filename: <span id="filename" class="inline-quote"></span></p>
+                    <p class="text-muted mt-0 mb-0 inline-metrics">json name: <span id="json-name" class="inline-quote"></span></p>
+                </div>
+                <pre data-clipboard-text id="txt-content" class="friendly-font mt-3 txt-wrap"></pre>
+                <hr/>
+                <pre id="json-content" class="json mt-5"></pre>
+
+                <div class="button-group">
+                  <button class="btn btn-outline-secondary" id="horizontal-btn" data-bs-toggle="tooltip" data-bs-title="Horizontal">
+                      <i class="fa-solid fa-ruler-horizontal"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary" id="vertical-btn" data-bs-toggle="tooltip" data-bs-title="Vertical">
+                      <i class="fa-solid fa-ruler-vertical"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary" id="square-btn" data-bs-toggle="tooltip" data-bs-title="Square">
+                      <i class="fa-solid fa-table-cells-large"></i>
+                  </button>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+{#                <button type="button" class="btn btn-info" id="load-json">Load Json</button>#}
+{#                <button type="button" class="btn btn-secondary" id="unload-json">Unload Json</button>#}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="send-prompt"> Generate</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
+
+
+    let selectedBtn;
+    const horizontalBtn = document.getElementById("horizontal-btn");
+    const verticalBtn = document.getElementById("vertical-btn");
+    const squareBtn = document.getElementById("square-btn");
+    var selectedMode = "vertical";
+
+    // Add click event listeners to each button
+    horizontalBtn.addEventListener("click", function(){
+        if(selectedBtn){
+            selectedBtn.classList.remove("active");
+        }
+        this.classList.add("active");
+        selectedBtn = this;
+        selectedMode = "horizontal";
+    });
+
+    verticalBtn.addEventListener("click", function(){
+        if(selectedBtn){
+            selectedBtn.classList.remove("active");
+        }
+        this.classList.add("active");
+        selectedBtn = this;
+        selectedMode = "vertical";
+    });
+
+    squareBtn.addEventListener("click", function(){
+        if(selectedBtn){
+            selectedBtn.classList.remove("active");
+        }
+        this.classList.add("active");
+        selectedBtn = this;
+        selectedMode = "square"
+    });
+
+    document.getElementById("send-prompt").addEventListener("click", function(){
+        var txtContent = document.getElementById("txt-content").innerText;
+        var xhr = new XMLHttpRequest();
+        console.log(selectedMode);
+
+        xhr.open("POST", "/generate", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send("prompt=" + txtContent + "&shape=" + selectedMode);
+    });
+
+// Initialize the img element with an empty source
+   var img = document.getElementById("modalImage");
+   img.src = "";
+
+   $('#imageModal').on('show.bs.modal', function (event) {
+       var modal = $(this);
+       var button = $(event.relatedTarget);
+       var imgSrc = button.data('img-src');
+
+       // change text space
+       var textSrc = button.attr('data-tag-str');
+       var textContent = modal.find('#txt-content');
+       textContent.text(textSrc)
+
+       // change  text for the img_filename and json name
+       var filename = modal.find('#filename');
+       filename.text(imgSrc);
+
+       var jsonName = modal.find('#json-name');
+       jsonSrc = button.data('json-src');
+       jsonName.text(jsonSrc);
+
+       // Set the new source; set dataset to make lazy loading happy
+       img.src = imgSrc;
+       img.dataset.src = imgSrc;
+       modal.find('#modalImage').attr('src', imgSrc);
+
+   })
 
 </script>

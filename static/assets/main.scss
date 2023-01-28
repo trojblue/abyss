@@ -40,6 +40,11 @@
     font-size: 0.9rem;
 }
 
+// text styles
+.txt-wrap {
+    white-space: pre-wrap!important;
+}
+
 
 // modal
 $modal-fade-transform: scale(.9);

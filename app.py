@@ -50,8 +50,18 @@ def frontpage():
     return render_template("home.html", images=generations)
 
 
+@app.route("/generate", methods=["POST"])
+def generate():
+    prompt = request.form["prompt"]
+    try:
+        shape = request.form["shape"]
+    except Exception:
+        shape = "vertical"
+    print(prompt, shape)
 
+
+    return "Prompt received"
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",  port=3000,debug=True)
+    app.run(host="0.0.0.0",  port=5000,debug=True)

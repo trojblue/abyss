@@ -24,6 +24,9 @@
   font-family: 'Open Sans', sans-serif;
   font-size: 0.9rem; }
 
+.txt-wrap {
+  white-space: pre-wrap !important; }
+
 /*!
    * Bootstrap  v5.2.3 (https://getbootstrap.com/)
    * Copyright 2011-2022 The Bootstrap Authors
