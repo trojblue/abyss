@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Hello World</h1>
+
+    <style>
+
+    </style>
+
+<div class="container-fluid px-2" >
+     <div class="row d-flex flex-wrap justify-content-center" id="images-row">
+          {% for image, score, json_path, tag_str in images %}
+              <div class="col-6 col-md-4 col-lg-2 p-2 image-div" id="image-div-{{ loop.index }}">
+                  <div class="card card-entirety">
+                      <img src="{{ image }}" class="card-img-top rounded-top img-responsive" data-bs-toggle="modal" data-bs-target="#imageModal"
+                           data-img-src="{{ image }}" data-json-src="{{ json_path }}" data-src="{{ image }}" data-tag-str="{{ tag_str }}">
+                      <div class="card-body custom-card-body">
+                          <p class="card-text text-center m-0 inline-metrics">{{ score }}</p>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+   </div>
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/lazy-loading.js') }}"></script>
+{% endblock %}
