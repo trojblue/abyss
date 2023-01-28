@@ -21,7 +21,7 @@ pip install -r requirements.txt
 python app.py
 # 在另一个窗口: 运行queue服务
 cd workers
-python gen_redirect.py
+python abyss_runner.py
 ```
 
 ## 使用:

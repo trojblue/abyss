@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/flaskProject1.iml" filepath="$PROJECT_DIR$/.idea/flaskProject1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sdtools-troph/.idea/sdtools-troph.iml" filepath="$PROJECT_DIR$/../sdtools-troph/.idea/sdtools-troph.iml" />
     </modules>
   </component>
 </project>
