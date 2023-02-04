@@ -4,5 +4,49 @@ queue_dst = "http://127.0.0.1:7861"
 
 # ======= QUEUE ==========
 queue_dst_dir = "./static/generated"
-webui_url = "http://127.0.0.1:7860"
-txt_dir = "D:\\Andrew\\Pictures\\==train\\==pai\\aesthetics.1280.cmb"
+webui_url = "http://127.0.0.1:7860/"
+txt_dir = "D:\\Andrew\\Pictures\\==train\\===niko.train3\\nk.1280"
+
+
+# ======== Generation Settings =========
+
+steps = 35
+# DPM++ 2S a Karras | DDIM | DPM++ 2M Karras
+sampler_name = "DPM++ 2S a Karras"
+
+# Latent (bicubic antialiased) | Latent (nearest-exact) | Latent
+hr_upscaler = "Latent (antialiased)"
+denoising_strength = 0.7
+cfg_scale = 9
+shapes = ["vertical", "square", "vertical", "vertical", "vertical"]   # 出现各种形状的概率
+shapes2 = ["square"]
+
+# ======== TAG Settings =========
+
+# 一定出现, 保证结尾
+end_tags = ["original", "highres"]
+
+# 一定出现, 保证开头
+start_tags = ["best quality", "a clean painting of 1girl"]
+
+# 总tag数量
+tag_count = 25
+
+#一定不出现
+taboo_tags = ["2boys", "wings", "male focus", "blood", "head out of frame"]
+
+# 一定出现, 随机顺序
+vital_tags = ["oversized clothes, two-tone hair, petals,chromatic abbrevation, jewlry, limited palette"]
+
+
+
+# ============== NEGATIVES ==============
+
+neg = "nsfw, text, error, signature, watermark, username, 3d, (large breast), multiple people, animals, lowres, cropped, worst quality, low quality, normal quality, jpeg artifacts, bad anatomy, bad hands, bad arms, bad feet, bad anatomy, missing fingers, extra digits, fewer digits, long neck"
+
+neg_sese = "text, error, signature, watermark, username, 3d, animals, lowres, cropped, worst quality, low quality, normal quality, jpeg artifacts, bad anatomy, bad hands, bad arms, bad feet, bad anatomy, missing fingers, extra digits, fewer digits, long neck"
+
+neg_longer = "text, error, signature, watermark, username, realistic,3d, multiple people, animals, bad anatomy, bad arms, lowres, cropped, worth quality ,low quality, normal quality, jpeg artifacts, blurry, bad anatomy, bad hands, bad arms, bad feet, bad anatomy, missing fingers, extra digits, fewer digits, long neck, missing legs, huge person, optical_illusion, bad legs, bad anatomy, text, error, signature, watermark, username, 3d, lowres, cropped, worst quality, low quality, normal quality, jpeg artifacts, blurry, bad anatomy, bad hands, bad arms, bad feet, bad anatomy, missing fingers, extra digits, fewer digits, long neck, missing legs"
+
+neg_qiuyue = "lowres, bad anatomy, bad hands, mutated hand, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name, out of focus, glowing eyes, (wedding ring:1.1), (((multiple views))), (((bad proportions))), (((multiple legs))), (((multiple arms))), pointy ears, 3D, 2girls, 3girls, female pubic hair, dark-skinned male, loli, small breasts, bad_prompt, (worst quality:2.0), (low quality:2.0), inaccurate limb, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name, tall, (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), bad-prompt:0.5, watermark, text, error, blurry, jpeg artifacts, cropped, normal quality, jpeg artifacts, signature, watermark, username, artist name, (worst quality, low quality:1.4), bad anatomy, low quality lowres, low quality lowres low polygon 3D game, low quality lowres monochrome sketch rough graffiti, low quality lowres very ugly fat obesity scar, low quality lowres chibi, low quality lowres poorly drawn bad anatomy, low quality lowres graffiti unbecoming colorfully, low quality lowres incoherent background, low quality lowres long body, low quality lowres duplicate comparison, low quality lowres sketch retro_artstyle doujinshi, low quality lowres sketch, low quality lowres text font ui error missing digit blurry, low quality lowres JPEG artifacts signature hazy bleary, low quality lowres monochrome parody meme, low quality lowres historical picture, low quality lowres disfigured mutated malformed twisted human body, low quality lowres futanari tranny, low quality lowres tentacle skeleton, low quality lowres vomit suicide death dirty, bag, pov, letterboxed, (nipples:1.2), candy, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry"
+

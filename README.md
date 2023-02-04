@@ -18,20 +18,16 @@ another stable-diffusion-webui, but made simple
 ```bash
 git clone https://github.com/trojblue/abyss && cd abyss
 pip install -r requirements.txt
-python app.py
-# 在另一个窗口: 运行queue服务
-cd workers
-python abyss_runner.py
 ```
 
 ## 使用:
 配置文件 → `config.toml`
-
-gen_redirect.py的配置: 目前hard-coded,
-
-把需要识别的图片放到`./static/generated`目录
+1. 把webui已经生成的AI图片放到`./static/generated`目录
+2. 在项目根目录启动worker: `python ./workers_abyss_runner.py`
+3. 启动server: `python app.py`
 
 
 ## TODO:
-- 对在库中却没有prompt的图片, 自动补齐prompt
+- 对在库中却没有prompt的图片, 自动补齐prompt: Done
 - 多个webui endpoint负载均衡
+- 改掉凑数的navbar

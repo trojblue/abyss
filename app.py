@@ -1,22 +1,16 @@
 from flask import Flask, render_template, request, send_file, jsonify
 from flask_assets import Environment
 from flask_ngrok2 import run_with_ngrok
-
 from flask_compress import Compress
 import sdtools.txtops
-import json
 import toml
-import os.path
 import requests
 from webassets import Bundle
-
 from methods.abs_files import *
 
 app = Flask(__name__)
 app.debug = True
 # Compress(app)
-# run_with_ngrok(app, auth_token="2JFGyPXcQVNpd0wnkl9iAmZBHZR_7Vw7fXvwTTRvvzjzFeTx2")
-
 
 # 读取设置
 with open("config.toml") as f:
@@ -42,7 +36,6 @@ assets.register(
 def frontpage():
     ai_src = config["aiimg_dir"]
     generations = get_generations(ai_src)
-
     return render_template("home.html", images=generations)
 
 
