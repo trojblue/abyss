@@ -36,7 +36,7 @@ tag_count = 25
 taboo_tags = ["2boys", "wings", "male focus", "blood", "head out of frame"]
 
 # 一定出现, 随机顺序
-vital_tags = ["oversized clothes, two-tone hair, petals,chromatic abbrevation, jewlry, limited palette"]
+vital_tags = ["oversized clothes, two-tone hair, petals"]
 
 
 

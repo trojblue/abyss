@@ -1,2 +1,8 @@
-Flask-Assets
-libsass
+Flask
+Flask_Assets
+Flask_Compress
+flask_ngrok2
+requests
+toml
+tqdm
+webassets
