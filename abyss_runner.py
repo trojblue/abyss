@@ -1,8 +1,6 @@
 import random
 import time
 from threading import Thread
-import sdtools.fileops as fops
-import sdtools.txtops as txtops
 import toml
 from flask import Flask, request, redirect, request, jsonify
 from queue import Queue
@@ -12,8 +10,9 @@ import datetime
 import hashlib
 import json, os
 import requests as r
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from typing import *
+import lib.utils
 
 """
 Original written by Galvin:
@@ -75,11 +74,11 @@ def modify_request(request):
     prompt = request["prompt"]
     shape = request["shape"]
     if shape == "horizontal":
-        w, h = (768, 512)
+        w, h = (832, 640)
     elif shape == "square":
-        w, h = (640, 640)
+        w, h = (704, 704)
     else:
-        w, h = (512, 768)  # vertical
+        w, h = (640, 832)  # vertical
 
     # Modify the request by adding a new key-value pair
     new_request["prompt"] = prompt
@@ -118,8 +117,8 @@ gen_template = {
     "hr_upscaler": runner_config["hr_upscaler"],
 }
 
-txt_files = fops.get_files_with_suffix(TXT_DIR, fops.TXT_FILE)
-tags_dict, txt_lines = fops.read_txt_files(TXT_DIR)
+txt_files = lib.utils.get_files_with_suffix(TXT_DIR, lib.utils.TXT_FILE)
+tags_dict, txt_lines = lib.utils.read_txt_files(TXT_DIR)
 
 
 def gen_prompt() -> str:
@@ -128,8 +127,12 @@ def gen_prompt() -> str:
     :return:
     :rtype:
     """
+    global runner_config
+    with open(os.path.join(SRC_DIR, "config.toml")) as f:
+        runner_config = toml.load(f)
+        runner_config["vital_tags"] = runner_config["vital_tags"][0].split(", ")
 
-    prompts = txtops.gen_prompt_by_config(tags_dict, config=runner_config)
+    prompts = lib.utils.gen_prompt_by_config(tags_dict, config=runner_config)
     return_tags = ", ".join(prompts)
     # rcfg = runner_config
     # start, vital, end = rcfg['start_tags'], rcfg['vital_tags'][0].split(','), rcfg['end_tags']
@@ -145,9 +148,12 @@ def read_random_txt():
 
 
 def preprocess_txt(tag_str):
-    tags = txtops.get_cleaned_tags_lite(tag_str)
-    return ", ".join(tags)
+    # tags = txtops.get_cleaned_tags_lite(tag_str)
 
+
+    tags = [i.strip() for i in tag_str.split(",")]
+    tags = [i.replace(" ", "_") for i in tags]
+    return ", ".join(tags)
 
 def fetch_dummy_request() -> Dict:
     """
@@ -161,7 +167,6 @@ def fetch_dummy_request() -> Dict:
     dummy_dict = {"prompt": prompt, "shape": shape}
     dummy_payload = modify_request(dummy_dict)
     return dummy_payload
-
 
 def check_queue():
     """
@@ -203,7 +208,8 @@ def run_queue():
     while True:
         if not request_queue.empty():
             req = request_queue.get()
-            # Send the request to port 7860
+
+            # ===Send the request to port 7860===
             process_req(req)
 
             r_date, r_shape, r_len, r_prompt = get_request_repr(req)
@@ -236,17 +242,7 @@ t2 = Thread(target=run_queue)
 t1.start()
 t2.start()
 
-import signal
-import sys
-from threading import Thread
-def sigint_handler(signal, frame):
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, sigint_handler)
 
 if __name__ == "__main__":
-    try:
-        app.run(port=7861)
-    except KeyboardInterrupt:
-        print("Program terminated by keyboard interrupt (Ctrl+C).")
-        sys.exit(0)
+    app.run(port=7861)
+
