@@ -3,7 +3,6 @@ https://edaoud.com/blog/2022/02/07/flask-bootstrap-assets/
 # Abyss
 
 another stable-diffusion-webui, but made simple
-- demo: https://abyss.noos.ca/
 
 
 ## 功能:
